@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Tasks</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .task {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .task:last-child {
+      border-bottom: none;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: green;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📋 Your Task List</h2>
+
+    <div class="toolbar">
+      <button onclick="exportToPDF()">📄 Export to PDF</button>
+      <button onclick="exportToExcel()">📊 Export to Excel</button>
+    </div>
+
+    <div id="taskList"></div>
+
+    <div style="text-align:center; margin-top:20px;">
+      <a href="create-group.html">← Back to Projects</a>
+    </div>
+  </div>
+
+  <script>
+    if (!localStorage.getItem("loggedInUser")) {
+      alert("Please log in.");
+      window.location.href = "login.html";
+    }
+
+    const currentUser = localStorage.getItem("loggedInUser");
+    const taskList = document.getElementById("taskList");
+
+    function loadTasks() {
+      taskList.innerHTML = "";
+      const today = new Date().toISOString().split('T')[0];
+
+      for (let key in localStorage) {
+        if (key.startsWith("tasks_")) {
+          const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+
+          tasks.forEach((task, index) => {
+            if (task.userEmail === currentUser) {
+              const div = document.createElement("div");
+              div.className = "task";
+
+              let statusLabel = "";
+              if (task.done) {
+                statusLabel = "✅ Done";
+              } else if (task.dueDate && task.dueDate < today) {
+                statusLabel = "🔴 Overdue";
+              } else {
+                statusLabel = "⏳ Pending";
+              }
+
+              div.innerHTML = `
+                <strong class="${task.done ? 'done' : ''}">📌 ${task.title}</strong><br>
+                <small><b>Assignee:</b> ${task.assignee}</small><br>
+                <small><b>Due:</b> ${task.dueDate || 'N/A'}</small><br>
+                <small><b>Status:</b> ${statusLabel}</small><br>
+                ${!task.done ? `<button onclick="markDone('${key}', ${index})">✔ Mark as Done</button>` : ""}
+              `;
+
+              taskList.appendChild(div);
+            }
+          });
+        }
+      }
+    }
+
+    function markDone(key, index) {
+      const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+      tasks[index].done = true;
+      localStorage.setItem(key, JSON.stringify(tasks));
+      loadTasks();
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 10;
+      doc.setFontSize(14);
+      doc.text("Task List", 90, y);
+      y += 10;
+
+      for (let key in localStorage) {
+        if (key.startsWith("tasks_")) {
+          const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+          tasks.forEach(task => {
+            if (task.userEmail === currentUser) {
+              doc.setFontSize(11);
+              doc.text(`📌 ${task.title}`, 10, y);
+              y += 6;
+              doc.text(`👤 ${task.assignee} | 📅 ${task.dueDate || 'N/A'} | ${task.done ? '✅ Done' : '⏳ Pending'}`, 10, y);
+              y += 10;
+              if (y > 270) { doc.addPage(); y = 10; }
+            }
+          });
+        }
+      }
+
+      doc.save("Task_List.pdf");
+    }
+
+    function exportToExcel() {
+      let taskData = [];
+
+      for (let key in localStorage) {
+        if (key.startsWith("tasks_")) {
+          const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+          tasks.forEach(task => {
+            if (task.userEmail === currentUser) {
+              taskData.push({
+                Title: task.title,
+                Assignee: task.assignee,
+                DueDate: task.dueDate || "N/A",
+                Status: task.done ? "Done" : "Pending"
+              });
+            }
+          });
+        }
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(taskData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Tasks");
+
+      XLSX.writeFile(workbook, "Task_List.xlsx");
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>

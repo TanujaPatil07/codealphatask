@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Group Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Group Project</h2>
+    <form id="groupForm">
+      <label for="projectName">Project Name:</label>
+      <input type="text" id="projectName" required>
+
+      <label for="description">Project Description:</label>
+      <textarea id="description" rows="4" required></textarea>
+
+      <label for="category">Category:</label>
+      <select id="category" required>
+        <option value="Web">Web</option>
+        <option value="Mobile">Mobile</option>
+        <option value="AI">AI</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="status">Project Status:</label>
+      <select id="status" required>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <label for="members">Team Members (comma separated):</label>
+      <input type="text" id="members" required>
+
+      <label for="deadline">Deadline:</label>
+      <input type="date" id="deadline" required>
+
+      <button type="submit">Create Project</button>
+    </form>
+
+    <div class="link">
+      <a href="view-projects.html">View All Projects →</a>
+    </div>
+	<div class="link">
+  <a href="assign-task.html">
+    <button type="button" style="background-color:##121212; color:#000;">➕ Assign Task</button>
+  </a>
+</div>
+<div class="link">
+  <a href="view-tasks.html">
+    <button type="button" style="background-color:#17a2b8; color:#fff;">📋 View Tasks</button>
+  </a>
+</div>
+<div class="link">
+  <a href="dashboard.html">
+    <button type="button" style="background-color:#007bff; color:white;">📊 Dashboard</button>
+  </a>
+</div>
+<div class="link">
+  <a href="comments.html">
+    <button type="button" style="background-color:#6a11cb; color:white;">📊 Comment Send</button>
+  </a>
+</div>
+  </div>
+
+  <script>
+    document.getElementById("groupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const project = {
+        name: document.getElementById("projectName").value,
+        desc: document.getElementById("description").value,
+        category: document.getElementById("category").value,
+        status: document.getElementById("status").value,
+        members: document.getElementById("members").value,
+        deadline: document.getElementById("deadline").value
+      };
+
+      const existing = JSON.parse(localStorage.getItem("projects") || "[]");
+      existing.push(project);
+      localStorage.setItem("projects", JSON.stringify(existing));
+      alert("Project saved!");
+      this.reset();
+    });
+  </script>
+</body>
+</html>

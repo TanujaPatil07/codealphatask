@@ -1,0 +1,61 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+  async function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const user = localStorage.getItem("loggedInUser");
+
+    let y = 10;
+    doc.setFontSize(14);
+    doc.text("Task List", 90, y);
+    y += 10;
+
+    for (let key in localStorage) {
+      if (key.startsWith("tasks_")) {
+        const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+        tasks.forEach(task => {
+          if (task.userEmail === user) {
+            doc.setFontSize(11);
+            doc.text(`📌 ${task.title}`, 10, y);
+            y += 6;
+            doc.text(`👤 ${task.assignee} | 📅 ${task.dueDate || 'N/A'} | ${task.done ? '✅ Done' : '⏳ Pending'}`, 10, y);
+            y += 10;
+            if (y > 270) { doc.addPage(); y = 10; }
+          }
+        });
+      }
+    }
+
+    doc.save("Task_List.pdf");
+  }
+
+  function exportToExcel() {
+    const user = localStorage.getItem("loggedInUser");
+    let taskData = [];
+
+    for (let key in localStorage) {
+      if (key.startsWith("tasks_")) {
+        const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+        tasks.forEach(task => {
+          if (task.userEmail === user) {
+            taskData.push({
+              Title: task.title,
+              Description: task.description,
+              Assignee: task.assignee,
+              DueDate: task.dueDate || "N/A",
+              Status: task.done ? "Done" : "Pending"
+            });
+          }
+        });
+      }
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(taskData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Tasks");
+
+    XLSX.writeFile(workbook, "Task_List.xlsx");
+  }
+</script>

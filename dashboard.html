@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Task Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .card {
+      flex: 1 1 150px;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      font-size: 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .total { background-color: #007bff; }
+    .completed { background-color: #28a745; }
+    .pending { background-color: #ffc107; color: #000; }
+    .overdue { background-color: #dc3545; }
+
+    .link {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .link a {
+      text-decoration: none;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📊 Task Status Dashboard</h2>
+    <div class="stats">
+      <div class="card total">📌 Total Tasks: <span id="totalCount">0</span></div>
+      <div class="card completed">✅ Completed: <span id="doneCount">0</span></div>
+      <div class="card pending">🕒 Pending: <span id="pendingCount">0</span></div>
+      <div class="card overdue">🔴 Overdue: <span id="overdueCount">0</span></div>
+    </div>
+
+    <div class="link">
+      <a href="create-group.html">← Back to Main</a>
+    </div>
+  </div>
+
+  <script>
+    const today = new Date().toISOString().split('T')[0];
+
+    let total = 0, done = 0, pending = 0, overdue = 0;
+
+    // Loop over all localStorage keys
+    for (let key in localStorage) {
+      if (key.startsWith("tasks_")) {
+        const tasks = JSON.parse(localStorage.getItem(key) || "[]");
+        tasks.forEach(task => {
+          total++;
+          if (task.done) {
+            done++;
+          } else if (task.dueDate && task.dueDate < today) {
+            overdue++;
+          } else {
+            pending++;
+          }
+        });
+      }
+    }
+
+    // Update counts in UI
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("doneCount").textContent = done;
+    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("overdueCount").textContent = overdue;
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Project Manager</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 40px; }
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; }
+    input {
+      width: 100%; padding: 10px; margin: 10px 0;
+      border: 1px solid #ccc; border-radius: 6px;
+    }
+    button {
+      width: 100%; padding: 12px;
+      background: #007bff; color: #fff;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+    }
+    a { display: block; text-align: center; margin-top: 10px; color: #007bff; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <a href="register.html">Create an account</a>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (!user) return alert("Invalid credentials!");
+
+      localStorage.setItem("loggedInUser", email);
+      window.location.href = "create-group.html"; // Go to project manager home
+    }
+  </script>
+</body>
+</html>

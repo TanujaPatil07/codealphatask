@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome | Project Manager</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      animation: slideIn 1s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 15px;
+      animation: pop 1.2s ease forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      margin: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+
+    .btn-login {
+      background-color: #28a745;
+    }
+
+    .btn-register {
+      background-color: #007bff;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 90%;
+        padding: 30px 20px;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- You can replace src with your own image or logo -->
+    <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" alt="App Logo" class="logo" />
+    
+    <h1>Welcome to Project Manager 🧩</h1>
+    <p>Organize projects, assign tasks & stay productive.</p>
+    <a href="login.html" class="btn btn-login">Login</a>
+    <a href="register.html" class="btn btn-register">Register</a>
+  </div>
+</body>
+</html>

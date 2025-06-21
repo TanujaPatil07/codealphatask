@@ -1,0 +1,63 @@
+<!-- public/comments.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Comments with WebSocket</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial; background: #f1f5f9; padding: 20px; }
+    .comment-box, .comment-list { margin-top: 20px; }
+    .comment-list p { background: #fff; padding: 10px; border-radius: 5px; margin: 5px 0; }
+    input, button { padding: 10px; font-size: 16px; }
+    button { background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h2>Live Project Comments</h2>
+  <div class="comment-list" id="commentList"></div>
+
+  <div class="comment-box">
+    <input type="text" id="commentInput" placeholder="Type your comment..." />
+    <button onclick="sendComment()">Send</button>
+  </div>
+
+  <script>
+    const socket = io(); // auto connects to localhost:3000
+
+    function sendComment() {
+      const input = document.getElementById("commentInput");
+      const msg = input.value.trim();
+      if (msg) {
+        displayComment("You: " + msg);
+        socket.emit("new-comment", msg);
+        input.value = "";
+      }
+    }
+
+    socket.on("receive-comment", function(msg) {
+      displayComment("Teammate: " + msg);
+      showNotification("New comment received!");
+    });
+
+    function displayComment(msg) {
+      const p = document.createElement("p");
+      p.textContent = msg;
+      document.getElementById("commentList").appendChild(p);
+    }
+
+    function showNotification(msg) {
+      if (Notification.permission === "granted") {
+        new Notification(msg);
+      }
+    }
+
+    // Request notification permission on load
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  </script>
+
+</body>
+</html>

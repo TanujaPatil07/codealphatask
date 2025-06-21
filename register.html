@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Project Manager</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 40px; }
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; }
+    input {
+      width: 100%; padding: 10px; margin: 10px 0;
+      border: 1px solid #ccc; border-radius: 6px;
+    }
+    button {
+      width: 100%; padding: 12px;
+      background: #28a745; color: #fff;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+    }
+    a { display: block; text-align: center; margin-top: 10px; color: #007bff; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Create Account</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="register()">Register</button>
+    <a href="login.html">Already have an account? Login</a>
+  </div>
+
+  <script>
+    function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const exists = users.find(u => u.email === email);
+      if (exists) return alert("User already exists!");
+
+      users.push({ email, password });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Account created! Please log in.");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

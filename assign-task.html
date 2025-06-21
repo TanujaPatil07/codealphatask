@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assign Task</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .link a {
+      text-decoration: none;
+      color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Assign Task to Project Member</h2>
+    <form id="taskForm">
+      <label for="project">Select Project:</label>
+      <select id="project" required></select>
+
+      <label for="taskTitle">Task Title:</label>
+      <input type="text" id="taskTitle" required>
+
+      <label for="taskDesc">Task Description:</label>
+      <textarea id="taskDesc" rows="3" required></textarea>
+
+      <label for="assignee">Assign to Member:</label>
+      <select id="assignee" required></select>
+	  
+	  <label for="dueDate">Due Date:</label>
+<input type="date" id="dueDate" required>
+
+      <button type="submit">Assign Task</button>
+    </form>
+
+    <div class="link">
+      <a href="view-projects.html">← Back to Projects</a>
+    </div>
+  </div>
+
+  <script>
+    const projectSelect = document.getElementById("project");
+    const assigneeSelect = document.getElementById("assignee");
+
+    // Load projects
+    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+    projects.forEach((p, index) => {
+      const opt = document.createElement("option");
+      opt.value = index;
+      opt.textContent = p.name;
+      projectSelect.appendChild(opt);
+    });
+
+    // Update assignees when project changes
+    function loadMembers(index) {
+      const members = projects[index].members.split(",").map(m => m.trim());
+      assigneeSelect.innerHTML = "";
+      members.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        assigneeSelect.appendChild(opt);
+      });
+    }
+
+    projectSelect.addEventListener("change", e => {
+      loadMembers(e.target.value);
+    });
+
+    // Default load for first project
+    if (projects.length > 0) {
+      loadMembers(0);
+    }
+
+    // Save task
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const projectIndex = projectSelect.value;
+      const task = {
+        title: document.getElementById("taskTitle").value,
+        description: document.getElementById("taskDesc").value,
+        assignee: assigneeSelect.value
+      };
+
+      const tasksKey = "tasks_" + projectIndex;
+      const existingTasks = JSON.parse(localStorage.getItem(tasksKey) || "[]");
+      existingTasks.push(task);
+      localStorage.setItem(tasksKey, JSON.stringify(existingTasks));
+
+      alert("Task assigned!");
+      this.reset();
+    });
+  </script>
+</body>
+</html>
